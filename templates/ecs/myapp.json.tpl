@@ -1,10 +1,10 @@
 [
   {
-    "name": "myapp",
+    "name": "sample-br-demo",
     "image": "${app_image}",
     "cpu": ${fargate_cpu},
     "memory": ${fargate_memory},
-    "networkMode": "awsvpc",
+    "networkMode": "bridge",
     "logConfiguration": {
         "logDriver": "awslogs",
         "options": {

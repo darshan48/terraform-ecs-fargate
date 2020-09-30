@@ -1,10 +1,10 @@
 # ecs.tf
 
-resource "aws_ecs_cluster" "main" {
-  name = "myapp-cluster"
+resource "aws_ecs_cluster" "web-tier" {
+  name = "sample-br-demo"
 }
 
-data "template_file" "myapp" {
+data "template_file" "sample-br-demo" {
   template = file("./templates/ecs/myapp.json.tpl")
 
   vars = {
@@ -16,18 +16,18 @@ data "template_file" "myapp" {
   }
 }
 
-resource "aws_ecs_task_definition" "app" {
-  family                   = "myapp-task"
+resource "aws_ecs_task_definition" "nginx-app" {
+  family                   = "web"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  network_mode             = "awsvpc"
+  network_mode             = "bridge"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.fargate_cpu
   memory                   = var.fargate_memory
   container_definitions    = data.template_file.myapp.rendered
 }
 
-resource "aws_ecs_service" "main" {
-  name            = "myapp-service"
+resource "aws_ecs_service" "nginx" {
+  name            = "nginx-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
   desired_count   = var.app_count
